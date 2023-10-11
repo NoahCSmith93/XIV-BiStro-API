@@ -7,8 +7,8 @@ const bestSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		currentGear: Gearset,
-		bestGear: Gearset,
+		currentGear: Gearset.schema,
+		bestGear: Gearset.schema,
 		owner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',

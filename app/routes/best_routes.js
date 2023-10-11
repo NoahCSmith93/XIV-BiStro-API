@@ -3,7 +3,7 @@ const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
 
-// pull in Mongoose model for bis
+// pull in Mongoose model for best
 const Best = require('../models/best')
 
 // this is a collection of methods that help us detect situations when we need
@@ -27,16 +27,16 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /bis
+// GET /best
 router.get('/bests', requireToken, (req, res, next) => {
-	Bis.find()
+	Best.find()
 		.then((bests) => {
-			// `bises` will be an array of Mongoose documents
+			// `bests` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
 			// apply `.toObject` to each one
 			return bests.map((best) => best.toObject())
 		})
-		// respond with status 200 and JSON of the bises
+		// respond with status 200 and JSON of the bests
 		.then((bests) => res.status(200).json({ bests: bests }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
