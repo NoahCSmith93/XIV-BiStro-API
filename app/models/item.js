@@ -4,11 +4,9 @@ const itemSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: true,
 		},
 		ilvl: {
 			type: Number,
-			required: true,
 		},
 	},
 )
