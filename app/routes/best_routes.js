@@ -28,8 +28,8 @@ const router = express.Router()
 
 // INDEX
 // GET /best
-router.get('/bests', requireToken, (req, res, next) => {
-	Best.find()
+router.get('/api/bests', requireToken, (req, res, next) => {
+	Best.find({owner: req.user.id})
 		.then((bests) => {
 			// `bests` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
@@ -44,7 +44,7 @@ router.get('/bests', requireToken, (req, res, next) => {
 
 // SHOW
 // GET /best/5a7db6c74d55bc51bdf39793
-router.get('/bests/:id', requireToken, (req, res, next) => {
+router.get('/api/bests/:id', (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Best.findById(req.params.id)
 		.then(handle404)
@@ -56,7 +56,7 @@ router.get('/bests/:id', requireToken, (req, res, next) => {
 
 // CREATE
 // POST /examples
-router.post('/bests', requireToken, (req, res, next) => {
+router.post('/api/bests', requireToken, (req, res, next) => {
 	// set owner of new example to be current user
 	req.body.best.owner = req.user.id
 
@@ -73,7 +73,7 @@ router.post('/bests', requireToken, (req, res, next) => {
 
 // UPDATE
 // PATCH /bests/5a7db6c74d55bc51bdf39793
-router.patch('/bests/:id', requireToken, removeBlanks, (req, res, next) => {
+router.patch('/api/bests/:id', requireToken, removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
 	delete req.body.best.owner
@@ -96,7 +96,7 @@ router.patch('/bests/:id', requireToken, removeBlanks, (req, res, next) => {
 
 // DESTROY
 // DELETE /examples/5a7db6c74d55bc51bdf39793
-router.delete('/bests/:id', requireToken, (req, res, next) => {
+router.delete('/api/bests/:id', requireToken, (req, res, next) => {
 	Best.findById(req.params.id)
 		.then(handle404)
 		.then((best) => {
