@@ -60,15 +60,6 @@ router.post('/api/bests', requireToken, (req, res, next) => {
 	// set owner of new example to be current user
 	req.body.best.owner = req.user.id
 
-	req.body.best.matching = []
-
-	for (curKey in req.body.best.currentGear) {
-		if (req.body.best.currentGear[curKey]['name'] === req.body.best.bestGear[curKey]['name']
-		&& req.body.best.currentGear[curKey]['ilvl'] === req.body.best.bestGear[curKey]['ilvl']) {
-			req.body.best.matching.push(curKey)
-		}
-	}
-
 	Best.create(req.body.best)
 		// respond to succesful `create` with status 201 and JSON of new "example"
 		.then((best) => {
