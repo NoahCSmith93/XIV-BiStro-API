@@ -27,7 +27,7 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /best
+// GET /bests
 router.get('/api/bests', requireToken, (req, res, next) => {
 	Best.find({owner: req.user.id})
 		.then((bests) => {
@@ -43,7 +43,7 @@ router.get('/api/bests', requireToken, (req, res, next) => {
 })
 
 // SHOW
-// GET /best/5a7db6c74d55bc51bdf39793
+// GET /bests/5a7db6c74d55bc51bdf39793
 router.get('/api/bests/:id', (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Best.findById(req.params.id)
@@ -55,10 +55,19 @@ router.get('/api/bests/:id', (req, res, next) => {
 })
 
 // CREATE
-// POST /examples
+// POST /bests
 router.post('/api/bests', requireToken, (req, res, next) => {
 	// set owner of new example to be current user
 	req.body.best.owner = req.user.id
+
+	req.body.best.matching = []
+
+	for (curKey in req.body.best.currentGear) {
+		if (req.body.best.currentGear[curKey]['name'] === req.body.best.bestGear[curKey]['name']
+		&& req.body.best.currentGear[curKey]['ilvl'] === req.body.best.bestGear[curKey]['ilvl']) {
+			req.body.best.matching.push(curKey)
+		}
+	}
 
 	Best.create(req.body.best)
 		// respond to succesful `create` with status 201 and JSON of new "example"
@@ -84,6 +93,17 @@ router.patch('/api/bests/:id', requireToken, removeBlanks, (req, res, next) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
 			requireOwnership(req, best)
+			req.body.best.matching = best.matching
+			console.log("All current gear", req.body.best.currentGear)
+			for (curKey in req.body.best.currentGear) {
+				if (curKey === "_id") continue
+				if (req.body.best.currentGear[curKey]['name'] === req.body.best.bestGear[curKey]['name']
+				&& req.body.best.currentGear[curKey]['ilvl'] === req.body.best.bestGear[curKey]['ilvl']) {
+					if (!best.matching.includes(curKey)){
+						req.body.best.matching.push(curKey)
+					}
+				}
+			}
 
 			// pass the result of Mongoose's `.update` to the next `.then`
 			return best.updateOne(req.body.best)
@@ -95,7 +115,7 @@ router.patch('/api/bests/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /examples/5a7db6c74d55bc51bdf39793
+// DELETE /bests/5a7db6c74d55bc51bdf39793
 router.delete('/api/bests/:id', requireToken, (req, res, next) => {
 	Best.findById(req.params.id)
 		.then(handle404)

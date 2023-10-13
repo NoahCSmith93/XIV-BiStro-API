@@ -9,6 +9,10 @@ const bestSchema = new mongoose.Schema(
 		},
 		currentGear: Gearset.schema,
 		bestGear: Gearset.schema,
+		matching: {
+			type: Array,
+			default: []
+		},
 		owner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
