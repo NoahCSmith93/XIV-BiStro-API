@@ -93,18 +93,6 @@ router.patch('/api/bests/:id', requireToken, removeBlanks, (req, res, next) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
 			requireOwnership(req, best)
-			req.body.best.matching = best.matching
-			console.log("All current gear", req.body.best.currentGear)
-			for (curKey in req.body.best.currentGear) {
-				if (curKey === "_id") continue
-				if (req.body.best.currentGear[curKey]['name'] === req.body.best.bestGear[curKey]['name']
-				&& req.body.best.currentGear[curKey]['ilvl'] === req.body.best.bestGear[curKey]['ilvl']) {
-					if (!best.matching.includes(curKey)){
-						req.body.best.matching.push(curKey)
-					}
-				}
-			}
-
 			// pass the result of Mongoose's `.update` to the next `.then`
 			return best.updateOne(req.body.best)
 		})
